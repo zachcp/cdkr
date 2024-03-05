@@ -1,6 +1,6 @@
 ---
 title: "Performance Notes"
-author: "Zaachary Charlop-Powers"
+author: "Zachary Charlop-Powers"
 date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
