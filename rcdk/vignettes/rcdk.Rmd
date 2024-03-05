@@ -205,7 +205,8 @@ view.molecule.2d(mols[[5]], depictor=depictor)
 #view.molecule.2d(mols[[5]], depictor=depictor)
 ```
 
-The method also allows you to highlight substructures using [SMARTS](https://en.wikipedia.org/wiki/Smiles_arbitrary_target_specification). This is useful in highlight commen substructures in a set of molecules
+The method also allows you to highlight substructures using [SMARTS](https://en.wikipedia.org/wiki/Smiles_arbitrary_target_specification). This is useful in highlight common substructures in a set of molecules
+
 ```{r eval=FALSE}
 depictor <- get.depictor(style='cob', abbr='reagents', sma='N(C)(C)')
 view.molecule.2d(mols, depictor=depictor)
@@ -311,6 +312,7 @@ if ( any(apply(coords, 2, function(x) length(unique(x))) == 1) ) {
     print("molecule is flat")
 }
 ```
+
 This is quite a simplistic check that just looks at whether the X, Y or
 Z coordinates are constant. To be more rigorous one could evaluate the
 moments of inertia about the axes.
@@ -326,6 +328,7 @@ occur or not in a list of target molecules. The `matches` method of this package
 returns a logical vector where the $i$'th element is `TRUE` if the $i$'th target molecules contains the query substructure. An example of its
 usage would be to identify molecules that contain a carbon atom that has
 exactly two bonded neighbors.
+
 ```{r}
 mols <- parse.smiles(c('CC(C)(C)C','c1ccc(Cl)cc1C(=O)O', 'CCC(N)(N)CC'))
 query <- '[#6D2]'
@@ -337,37 +340,45 @@ matches(query, mols)
 A key requirement for the predictive modeling of molecular properties and activities are [molecular descriptors](https://en.wikipedia.org/wiki/Molecular_descriptor) - numerical characterizations of the molecular structure.  The [CDK](https://cdk.github.io/) implements a variety of molecular descriptors, categorized into topological, constitutional, geometric, electronic and hybrid. It is possible to evaluate all available descriptors at one go, or evaluate individual descriptors.
 
 First, we can take a look at the available descriptor categories.
+
 ```{r}
 dc <- get.desc.categories()
 dc
 ```
+
 Given the categories we can get the names of the descriptors for a single
 category. Of course, you can always provide the category name directly.
+
 ```{r}
 dn <- get.desc.names(dc[4])
 dn
 ```
+
 Each descriptor name is actually a fully qualified Java class name for the
 corresponding descriptor. These names can be supplied to `eval.desc` to
 evaluate a single or multiple descriptors for one or more molecules.
+
 ```{r eval=FALSE}
 aDesc <- eval.desc(mol, dn[4])
 allDescs <- eval.desc(mol, dn)
 ```
 
-The return value of eval.desc is a `data.frame` with the descriptors in the
+The return value of `eval.desc` is a `data.frame` with the descriptors in the
 columns and the molecules in the rows. For the above example we get a single
 row. But given a list of molecules, we can easily get a descriptor matrix.
 
 For example, let's build a linear regression model to predict boiling points
 for the BP dataset. First we need a set of descriptors and so we evaluate
 all available descriptors. Also note that since a descriptor might belong to
-more than one category, we should obtain a unique set of descriptor names
+more than one category, we should obtain a unique set of descriptor names.
+
 ```{r}
 descNames <- unique(unlist(sapply(get.desc.categories(), get.desc.names)))
 ```
+
 For the current discussion we focus on a few, manually selected descriptors
 that we know will be related to boiling point.
+
 ```{r}
 data(bpdata)
 mols <- parse.smiles(bpdata[,1])
@@ -379,12 +390,12 @@ descs <- eval.desc(mols, descNames)
 class(descs)
 dim(descs)
 ```
+
 When a descriptor value cannot be computed, it's value is set to `NA`. This may happen if a descriptor requires 3D coordinates, but only 2D coordinates are available. In this case, we have manually selected descriptors such that there will be no undefined values.
 
-Given the ubiquity of certain descriptors, some of them are directly available
-via their own functions. Specifically, one can calculate [TPSA](https://pubmed.ncbi.nlm.nih.gov/19149561/) (topological
-polar surface area), [AlogP](https://pubs.acs.org/doi/abs/10.1021/jp980230o) and [XlogP](http://www.compchemcons.com/xlogp/xlogp.html) without having to go through
+Given the ubiquity of certain descriptors, some of them are directly available via their own functions. Specifically, one can calculate [TPSA](https://pubmed.ncbi.nlm.nih.gov/19149561/) (topological polar surface area), [AlogP](https://pubs.acs.org/doi/abs/10.1021/jp980230o) and [XlogP](http://www.compchemcons.com/xlogp/xlogp.html) without having to go through
 `eval.desc`. (Note that AlogP and XlogP assume that hydrogens are explicitly specified in the molecule. This may not be true if the molecules were obtained from SMILES)
+
 ```{r}
 mol <- parse.smiles('CC(=O)CC(=O)NCN')[[1]]
 convert.implicit.to.explicit(mol)
@@ -409,8 +420,8 @@ descs <- descs[, -unique(r2[,2])]
 
 Note that the above correlation reduction step is pretty crude and there
 are better ways to do it. Given the reduced descriptor matrix, we can
-perform feature selection (say using [leaps](https://CRAN.R-project.org/package=leaps), [caret](https://CRAN.R-project.org/package=caret) or a [GA](https://CRAN.R-project.org/package=GenAlgo) to identify a suitable
-subset of descriptors. Given that we selected the descriptors by hand, we can skip this section, and directly build the model and generate a plot of predicted versus observed BP. (Note that this is a toy example and is not an example of good QSAR practice!)
+perform feature selection (say using [leaps](https://CRAN.R-project.org/package=leaps), [caret](https://CRAN.R-project.org/package=caret) or a [GA](https://CRAN.R-project.org/package=GenAlgo) to identify a suitable subset of descriptors. Given that we selected the descriptors by hand, we can skip this section, and directly build the model and generate a plot of predicted versus observed BP. (Note that this is a toy example and is not an example of good QSAR practice!)
+
 ```{r}
 model <- lm(BP ~ khs.sCH3 + khs.sF + apol + nHBDon, data.frame(bpdata, descs))
 summary(model)
@@ -427,33 +438,30 @@ abline(0,1, col='red')
 Fingerprints are a common representation used for a variety of purposes such as similarity searching and predictive modeling. The [CDK](https://cdk.github.io/) provides a variety of fingerprints ranging from path-based hashed fingerprints to circular (specifically, an implementation fo the [ECFP](https://pubs.acs.org/doi/abs/10.1021/ci100050t) fingerprints) and signature fingerprints (based on the [signature](https://pubs.acs.org/doi/abs/10.1021/ci020345w) molecular descriptor). Some of the fingerprints are represented as binary strings and other by integer vectors. The `rcdk` employs the [fingerprint](https://CRAN.R-project.org/package=fingerprint) package to support operations on the resultant fingerprints.
 
 In this section, we present an example of using fingerprints to generate a hierarchical clustering of a set of molecules from the included boiling point dataset. We first parse the SMILES for the molecules in the dataset and then compute the fingerprints, specifying the `circular` type.
+
 ```{r}
 data(bpdata)
 mols <- parse.smiles(bpdata[,1])
 fps <- lapply(mols, get.fingerprint, type='circular')
 ```
 
-With the fingerprints, we can then compute a pairwise similarity matrix using the [Tanimoto](https://en.wikipedia.org/wiki/Chemical_similarity) metric. Since R's `hclust` method requires a distance matrix, we convert the similarity matrix to a distance matrix
+With the fingerprints, we can then compute a pairwise similarity matrix using the [Tanimoto](https://en.wikipedia.org/wiki/Chemical_similarity) metric. Since R's `hclust` method requires a distance matrix, we convert the similarity matrix to a distance matrix.
+
 ```{r}
 fp.sim <- fingerprint::fp.sim.matrix(fps, method='tanimoto')
 fp.dist <- 1 - fp.sim
 ```
+
 Finally, we can perform the clustering. In this case we use the `hclust` method though any of R's clustering methods could be used.
+
 ```{r}
 cls <- hclust(as.dist(fp.dist))
 plot(cls, main='A Clustering of the BP dataset', labels=FALSE)
 ```
 
-Another common task for fingerprints is similarity searching. That is, 
-given a collection of _target_ molecules, find those molecules that are similar
-to a _query_ molecule. This is achieved by evaluating a similarity metric
-between the query and each of the target molecules. Those target molecules
-exceeding a user defined cutoff will be returned. With the help of the [fingerprint](https://CRAN.R-project.org/package=fingerprint) package this is easily accomplished.
+Another common task for fingerprints is similarity searching. That is,  given a collection of _target_ molecules, find those molecules that are similar to a _query_ molecule. This is achieved by evaluating a similarity metric between the query and each of the target molecules. Those target molecules exceeding a user defined cutoff will be returned. With the help of the [fingerprint](https://CRAN.R-project.org/package=fingerprint) package this is easily accomplished.
 
-For example, we can identify all the molecules in the BP dataset that have
-a Tanimoto similarity of 0.3 or more with acetalehyde, and then create a tabular
-summary. Note that this could also be accomplished with
-molecular descriptors, in which case you’d probably evaluate the Euclidean
+For example, we can identify all the molecules in the BP dataset that have a Tanimoto similarity of 0.3 or more with acetaldehyde, and then create a tabular summary. Note that this could also be accomplished with molecular descriptors, in which case you’d probably evaluate the Euclidean
 distance between descriptor vectors.
 
 ```{r}

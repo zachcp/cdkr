@@ -28,9 +28,9 @@ the element is the most occurrence in nature, e.g., $C_4H_{11}O^2D$.
 
 ## Parsing a Molecule To a Molecular Formula
 
-Front a molecule, defined as conjunct of atoms helding together by chemical
+Front a molecule, defined as conjunct of atoms held together by chemical
 bonds, we can simplify it taking only the information about the atoms. The `rcdk`
-package provides a parser to translate molecules to molecular formlulas, the
+package provides a parser to translate molecules to molecular formulas, the
 `get.mol2formula` function.
 
 ```{r}
@@ -103,7 +103,7 @@ of +1.
 formula <- get.formula('NH4', charge = 1)
 isvalid.formula(formula,rule=c("nitrogen","RDBE"))
 ```
-The `generate.formula` method can perform these validation tests during formula generation by setting `validation=TRUE`. However, this can significantly slow down the process of genersating formulae, especially with larger mass windows. When the default of `FALSE` is used, nonsensical formulae may be generated, and it's up to the user to filter them out.
+The `generate.formula` method can perform these validation tests during formula generation by setting `validation=TRUE`. However, this can significantly slow down the process of generating formulae, especially with larger mass windows. When the default of `FALSE` is used, nonsensical formulae may be generated, and it's up to the user to filter them out.
 
 In contrast, the `generate.formula.iter` method employs the Round Robin formula generation algorithm, which is significantly faster than the default method. In contrast to `generate/formula`, this method returns an iterator which allows you to process large formula sets without excessive memory usage.
 ```{r warn=FALSE}

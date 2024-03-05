@@ -316,7 +316,7 @@ get.connected.atoms <- function(atom, mol) {
 #' 
 #' Get the index of an atom in a molecule.
 #' 
-#' Acces the index of an atom in the context of an IAtomContainer. 
+#' Access the index of an atom in the context of an IAtomContainer. 
 #' Indexing starts from 0. If the index is not known, -1 is returned.
 #' 
 #' @param atom The atom object

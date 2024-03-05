@@ -39,7 +39,7 @@ get.depictor(
 
 \item{sma}{Default. \code{NULL}}
 
-\item{fillToFit}{Defailt. \code{FALSE}}
+\item{fillToFit}{Default. \code{FALSE}}
 }
 \description{
 return an RcdkDepictor.

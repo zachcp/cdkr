@@ -8,7 +8,7 @@
 #' written out as SD tags.
 #' 
 #' @details In case individual SD files are desired the
-#' \code{together} argument can be set ot \code{FALSE}. In this case, the
+#' \code{together} argument can be set to \code{FALSE}. In this case, the
 #' value of \code{filename} is used as a prefix, to which a numeric
 #' identifier and the suffix of ".sdf" is appended. 
 #' 
