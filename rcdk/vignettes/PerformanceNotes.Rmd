@@ -16,16 +16,9 @@ vignette: >
 In September 2022, of this year, [Stepehn Neumann](https://gist.github.com/sneumann)
 [created a benchmark](https://gist.github.com/sneumann/959a6d205ea4ac73eaf1393da0ec0673) for moecular weight calculation that he [announced on twitter](https://twitter.com/sneumannoffice/status/1570070283083710465?s=20&t=RqJR3Bbh-DEcbCf2tWUEBQ) showing that rCDK had dismal performance relative to other tools in the R ecosystem. Something seemed a bit off so I looked into the code. 
 
-What I discovered is that the mass spec calculations were mediated by R classes instead of accessing the underlying Java code directly and if you write a function that does
-that you get a speedup, and if you avoid reflection by creating static calls then you
-get a really fast function.
+What I discovered is that the mass spec calculations were mediated by R classes instead of accessing the underlying Java code directly and if you write a function that does that you get a speedup, and if you avoid reflection by creating static calls then you get a really fast function.
 
-This is a good example of how to think about using Java from within R where the
-use of the helper rJava functions, `J` and `$` allow you to prototype code and benefit
-from reflection so you can code sort of like you would in R. Then, if you need
-performance, you can tighten down the code a bit by making the calls static. You can
-see that progression in the code below which is accompanied by the outputs from those benchmarks.
-
+This is a good example of how to think about using Java from within R where the use of the helper rJava functions, `J` and `$` allow you to prototype code and benefit from reflection so you can code sort of like you would in R. Then, if you need performance, you can tighten down the code a bit by making the calls static. You can see that progression in the code below which is accompanied by the outputs from those benchmarks.
 
 
 ```sh
@@ -42,6 +35,7 @@ will give (2/3) runtime in µs:
 
 
 https://gist.github.com/sneumann/959a6d205ea4ac73eaf1393da0ec0673
+
 ## Benchmark
 
 ```{r, eval=FALSE}
